@@ -224,7 +224,6 @@ export class Assessment extends React.Component {
         items.push(this.getItem(index));
       });
     }
-
     return items;
   }
 
@@ -358,6 +357,7 @@ export class Assessment extends React.Component {
     let nav = null;
 
     if (this.props.assessmentLoaded) {
+     
       if (this.props.assessment.requireNAnswers === -1) {
         nav = (
           <TwoButtonNav
@@ -372,6 +372,7 @@ export class Assessment extends React.Component {
           <ThreeButtonNav />
         );
       }
+
     }
 
     return (

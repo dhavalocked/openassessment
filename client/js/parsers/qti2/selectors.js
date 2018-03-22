@@ -51,7 +51,7 @@ export function outcomes() {
 }
 
 export function questionCount(state, props) {
-  return 3;
+  return 2;
 }
 
 // Returns true if assessment has loaded, false otherwise.

@@ -151,15 +151,8 @@ function checkAnswers(store, action) {
 
   return _.map(questionIndexes, (questionIndex) => {
     const question = state.assessment.item;
-    // If an Immutable list index is set to undefined (as opposed to not being
-    // assigned anything), then the getIn() will still return undefined instead
-    //  of the default return value. We need to see if it
-    // is actually undefined before calling toJS()
     let userInput = state.assessmentProgress.getIn(['responses', `${questionIndex}`]);
     userInput = userInput ? userInput.toJS() : [];
-
-    //const url = `assessment/banks/${state.settings.bank}/assessmentstaken/${state.assessmentMeta.id}/questions/${question.json.id}/submit`;
-    //const body = getBody(userInput, question);
     
     // Let progress reducer know how many questions are being checked
     store.dispatch({
@@ -170,20 +163,7 @@ function checkAnswers(store, action) {
     // If the user answered hasn't given an answer yet, we need to display
     // feedback telling the user to do so, and not send any information to qbank.
     if (!isAnswered(userInput)) {
-
-      const payload = {
-        feedback : "<p>Please select answer</p>",
-        correct  : false,
-        userInput
-      };
-      store.dispatch({
-        type     : AssessmentProgressConstants.ASSESSMENT_CHECK_ANSWER_DONE,
-        payload,
-        userInput,
-        questionIndex,
-        original : action
-      });
-
+      alert('please select atleast one answer')
       return null;
     }
     const payload = {
@@ -199,20 +179,6 @@ function checkAnswers(store, action) {
       userInput,
       original : action
     });
-    // const promise = postQbank(state, url, body);
-    // if (promise) {
-    //   promise.then((response) => {
-        
-    //   },
-    //   (error) => {
-    //     store.dispatch({
-    //       type: AssessmentProgressConstants.ASSESSMENT_CHECK_ANSWER_DONE,
-    //       error
-    //     });
-    //     console.error(error); // eslint-disable-line no-console
-    //   });
-    //   return promise;
-    // }
 
     return null;
   });
@@ -257,34 +223,34 @@ export default {
     method : Network.GET,
     url    : action => (`api/sessions/${action.userId}`)
   },
+  [AssessmentConstants.LOAD_ASSESSMENT]: (store, action) => {},
+  // [AssessmentConstants.LOAD_ASSESSMENT]: (store, action) => {
+  //   const state = store.getState();
 
-  [AssessmentConstants.LOAD_ASSESSMENT]: (store, action) => {
-    const state = store.getState();
+  //   const metaUrl = `assessment/banks/${state.settings.bank}/assessmentsoffered/${state.settings.assessment_offered_id}/assessmentstaken`;
 
-    const metaUrl = `assessment/banks/${state.settings.bank}/assessmentsoffered/${state.settings.assessment_offered_id}/assessmentstaken`;
+  //   const body = {
+  //     sessionId: state.settings.eid
+  //   };
 
-    const body = {
-      sessionId: state.settings.eid
-    };
+  //   const metaPromise = postQbank(state, metaUrl, body);
 
-    const metaPromise = postQbank(state, metaUrl, body);
-
-    if (metaPromise) {
-      metaPromise.then((response, error) => {
-        store.dispatch({
-          type     : AssessmentMetaConstants.LOAD_ASSESSMENT_META_DONE,
-          payload  : response.body,
-          original : action,
-          response,
-          error
-        });
-        loadQuestions(store, action);
-      },
-      (error) => {
-        store.dispatch(displayError('There was a problem creating the assessmentstaken in QBank', error));
-      });
-    }
-  },
+  //   if (metaPromise) {
+  //     metaPromise.then((response, error) => {
+  //       store.dispatch({
+  //         type     : AssessmentMetaConstants.LOAD_ASSESSMENT_META_DONE,
+  //         payload  : response.body,
+  //         original : action,
+  //         response,
+  //         error
+  //       });
+  //       loadQuestions(store, action);
+  //     },
+  //     (error) => {
+  //       store.dispatch(displayError('There was a problem creating the assessmentstaken in QBank', error));
+  //     });
+  //   }
+  // },
 
   [AssessmentProgressConstants.ASSESSMENT_CHECK_ANSWER]: (store, action) => {
     checkAnswers(store, action);
@@ -292,8 +258,14 @@ export default {
 
   [AssessmentProgressConstants.ASSESSMENT_NEXT_QUESTIONS]: (store, action) => {
     const state = store.getState();
-    if (state.settings.unlock_next === 'ALWAYS') {
+    state.settings.question_id = "idf515ebfc-b5c1-4c9c-a99e-cc9ef1bd1e7e"
+    if (state.settings.unlock_next === 'ON_ANSWER_CHECK') {
       checkAnswers(store, action);
+    
+      store.dispatch({
+        type : AssessmentConstants.LOAD_ASSESSMENT,
+        apiCall: true
+      })
     }
   },
 
