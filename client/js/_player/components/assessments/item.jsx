@@ -126,6 +126,10 @@ export default class Item extends React.Component{
   }
 
   render() {
+    console.log(this.props.question);
+    if (!this.props.question) {
+      return null;
+    }
     return (
         <div className="c-question">
           <div className="c-question-prompt">

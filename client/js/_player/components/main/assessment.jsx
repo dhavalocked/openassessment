@@ -182,7 +182,7 @@ export class Assessment extends React.Component {
         localizedStrings={props.localizedStrings}
         settings={props.settings}
         assessment={props.assessment}
-        question={props.allQuestions[index]}
+        question={props.allQuestions[0]}
         response={props.responses[index] || []}
         currentItemIndex={index}
         questionCount={props.questionCount}

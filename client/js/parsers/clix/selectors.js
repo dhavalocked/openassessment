@@ -41,6 +41,9 @@ export function correctItemCount(state, props) {
 
 export function checkButtonText(state, props) {
   const localizedStrings = localizeStrings(state, props).twoButtonNav;
+  if (currentItems(state).length === 0) {
+    return localizedStrings.checkAnswerButton;
+  }
   const item = currentItems(state)[0];
 
   switch (item.question_type) {
